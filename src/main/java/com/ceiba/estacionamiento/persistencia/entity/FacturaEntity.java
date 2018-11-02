@@ -15,7 +15,7 @@ import com.ceiba.estacionamiento.modelo.Vehiculo;
 public class FacturaEntity {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
 	private String placaVehiculo;
 	private int cilindrajeVehiculo;
@@ -33,6 +33,15 @@ public class FacturaEntity {
 		this.cilindrajeVehiculo = vehiculo.getCilindraje();
 		this.tipoVehiculo = vehiculo.getTipo();
 		this.fechaIngreso = fechaIngreso;
+	}
+	
+	public FacturaEntity(Vehiculo vehiculo, Date fechaIngreso, boolean parqueado) {
+		super();
+		this.placaVehiculo = vehiculo.getPlaca();
+		this.cilindrajeVehiculo = vehiculo.getCilindraje();
+		this.tipoVehiculo = vehiculo.getTipo();
+		this.fechaIngreso = fechaIngreso;
+		this.parqueado = parqueado;
 	}
 	
 	public FacturaEntity() {

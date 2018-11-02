@@ -9,7 +9,8 @@ public interface FacturaDao {
 	
 	void guardarFactura(FacturaEntity factura);
 	Vehiculo obtenerVeiculoParqueadoPorPlaca(String placa);
-	boolean actualizarFactura(FacturaEntity factura);
+	FacturaEntity obtenerFacturaVeiculoParqueadoPorPlaca(String placa);
+	void actualizarFactura(FacturaEntity factura);
 	List<Vehiculo> obtenerVehiculosPorTipoParqueados(int tipoVehiculo);
 	List<Vehiculo> obtenerVehiculosParqueados();
 	int contarVehiculosParqueadosPorTipo(int tipoVehiculo);
