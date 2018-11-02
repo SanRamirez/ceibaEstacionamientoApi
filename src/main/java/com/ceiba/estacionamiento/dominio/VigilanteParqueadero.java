@@ -24,7 +24,7 @@ public class VigilanteParqueadero {
 	
 	public static final String NO_ESTA_AUTORIZADO_A_INGRESAR = "no esta autorizado a ingresar";
 	public static final String ESTA_AUTORIZADO_A_INGRESAR = "esta autorizado a ingresar";
-	public static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "no puede ingresar porque no está en un dia hábil";
+	public static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "no puede ingresar porque no esta en un dia habil";
 	public static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "no puede ingresar porque el parqueadero esta lleno";
 	
 	//cambiar a String
