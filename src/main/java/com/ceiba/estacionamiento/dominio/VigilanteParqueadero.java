@@ -79,7 +79,7 @@ public class VigilanteParqueadero {
 			return factura;
 		}
 		
-		//añadir costo a la factura
+		//agregar costo a la factura
 		factura = agregarCostoFactura(factura);
 		
 		//actualizar factura en la base de datos
