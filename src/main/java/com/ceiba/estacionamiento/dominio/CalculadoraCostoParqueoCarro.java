@@ -11,7 +11,7 @@ import com.ceiba.estacionamiento.util.Constantes;
 public class CalculadoraCostoParqueoCarro implements CalculadoraCostoParqueo {
 
 	@Autowired
-	public CalculadoraTiempoParqueo calculadoraTiempo = new CalculadoraTiempoParqueo();
+	private CalculadoraTiempoParqueo calculadoraTiempo = new CalculadoraTiempoParqueo();
 	
 	@Override
 	public double calcularCostoFactura(FacturaEntity factura) {

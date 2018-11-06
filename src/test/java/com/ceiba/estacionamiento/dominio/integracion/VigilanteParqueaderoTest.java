@@ -1,6 +1,8 @@
 package com.ceiba.estacionamiento.dominio.integracion;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,14 +59,24 @@ public class VigilanteParqueaderoTest {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("CBA-210").build();
 		vehiculo.setTipo(2);
-		Date fechaIngreso = new Date(2018,10,29);
-		fechaIngreso.setHours(8);
-		fechaIngreso.setMinutes(0);
-		fechaIngreso.setSeconds(0);
-		Date fechaSalida = new Date(2018,11,29);
-		fechaIngreso.setHours(10);
-		fechaIngreso.setMinutes(0);
-		fechaIngreso.setSeconds(0);
+		Calendar calendar = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0);
+		Date fechaIngreso = calendar.getTime();
+		
+		// act
+		vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+		vigilanteParqueadero.registrarSalidaVehiculo(vehiculo.getPlaca());
+
+		// assert
+		Assert.assertNull(facturaDao.obtenerVeiculoParqueadoPorPlaca(vehiculo.getPlaca()));
+	}
+	
+	@Test
+	public void testObtenerVehiculosParqueados() {
+		// arrange
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("CBA-210").build();
+		vehiculo.setTipo(2);
+		Calendar calendar = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0);
+		Date fechaIngreso = calendar.getTime();
 		
 		// act
 		vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);

@@ -12,10 +12,6 @@ public class FacturaTestDataBuilder {
 	private static final int TIPO_VEHICULO = 1;
 	private static final Date FECHA_INGRESO = new Date();
 	
-	private String placa;
-	private int cilindraje;
-	private int tipo;
-
 	private String placaVehiculo;
 	private int cilindrajeVehiculo;
 	private int tipoVehiculo;
@@ -34,9 +30,9 @@ public class FacturaTestDataBuilder {
 	}
 	
 	public FacturaTestDataBuilder conVechiculoYFechaIngreso(Vehiculo vehiculo, Date fechaIngreso) {
-		this.placa = vehiculo.getPlaca();
-		this.cilindraje = vehiculo.getCilindraje();
-		this.tipo = vehiculo.getTipo();
+		this.placaVehiculo = vehiculo.getPlaca();
+		this.cilindrajeVehiculo = vehiculo.getCilindraje();
+		this.tipoVehiculo = vehiculo.getTipo();
 		this.fechaIngreso = fechaIngreso;
 		return this;
 	}

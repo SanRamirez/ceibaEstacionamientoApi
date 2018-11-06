@@ -18,15 +18,14 @@ import com.ceiba.estacionamiento.util.validaciones.VehiculoValidacion;
 public class VigilanteParqueadero {
 	
 	@Autowired
-	FacturaDao facturaDao;
+	private FacturaDao facturaDao;
 	@Autowired
-	VehiculoValidacion vehiculoValidacion;
+	private VehiculoValidacion vehiculoValidacion;
 	private static final Logger LOGGER = LogManager.getLogger(VigilanteParqueadero.class);
 	
-	public static final String NO_ESTA_AUTORIZADO_A_INGRESAR = "no esta autorizado a ingresar";
-	public static final String ESTA_AUTORIZADO_A_INGRESAR = "esta autorizado a ingresar";
-	public static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "no puede ingresar porque no esta en un dia habil";
-	public static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "no puede ingresar porque el parqueadero esta lleno";
+	private static final String ESTA_AUTORIZADO_A_INGRESAR = "esta autorizado a ingresar";
+	private static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "no puede ingresar porque no esta en un dia habil";
+	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "no puede ingresar porque el parqueadero esta lleno";
 	
 	//cambiar a String
 	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
@@ -45,7 +44,7 @@ public class VigilanteParqueadero {
 	
 	
 	
-	public String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
+	private String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
 		
 		//validar vehiculo y fecha
@@ -63,7 +62,7 @@ public class VigilanteParqueadero {
 	}
 	
 	
-	public boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
+	private boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
 		if(vehiculoValidacion.placaIniciaConletraA(placaVehiculo) && !vehiculoValidacion.diaEsDomingoOLunes(fechaIngreso)) {
 			LOGGER.debug(NO_PUEDE_INGRESAR_DIA_NO_HABIL);
 			return false;
@@ -71,7 +70,7 @@ public class VigilanteParqueadero {
 		return true;
 	}
 	
-	public boolean validarIngresoPorDisponibilidad(int tipoVehiculo) {
+	private boolean validarIngresoPorDisponibilidad(int tipoVehiculo) {
 		if( !vehiculoValidacion.espacioParaParqueoDisponible(tipoVehiculo)) {
 			LOGGER.debug(NO_PUEDE_INGRESAR_PARQUEADERO_LLENO);
 			return false;
@@ -85,13 +84,13 @@ public class VigilanteParqueadero {
 			return factura;
 		}
 		factura.setFechaSalida(new Date());
-		factura = agregarCostoFactura(factura);
+		factura.setValor(calcularCostoFactura(factura));
 		factura.setParqueado(false);
 		facturaDao.actualizarFactura(factura);
 		return factura;
 	}
 	
-	public FacturaEntity agregarCostoFactura(FacturaEntity factura){
+	private double calcularCostoFactura(FacturaEntity factura){
 		CalculadoraCostoParqueo calculadoraCosto;
 		double costoParqueo;
 
@@ -106,11 +105,8 @@ public class VigilanteParqueadero {
 	    	  calculadoraCosto = null;
 	           break;
 		}
-	
 		costoParqueo = (calculadoraCosto != null ? calculadoraCosto.calcularCostoFactura(factura) : 0);
-		factura.setValor(costoParqueo);
-		
-		return factura;
+		return costoParqueo;
 	}
 
 

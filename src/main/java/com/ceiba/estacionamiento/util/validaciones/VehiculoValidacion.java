@@ -18,7 +18,7 @@ public class VehiculoValidacion {
 	
 	private static final Logger LOGGER = LogManager.getLogger(VehiculoValidacion.class);
 	
-	@Autowired
+	private @Autowired
 	FacturaDao factDao;
 	
 	public boolean vehiculoEsValidoParaIngreso() {
@@ -59,7 +59,7 @@ public class VehiculoValidacion {
 	}
 	
 	
-	public  int limitePorTipoVehiculo(int tipoVehiculo) {
+	private  int limitePorTipoVehiculo(int tipoVehiculo) {
 		int limite = 0;
 		if(tipoVehiculo == Constantes.CODIGO_VEHICULO_MOTO) {
 			limite = Constantes.PARQUEADERO_CEIBA_LIMITE_MOTOS;

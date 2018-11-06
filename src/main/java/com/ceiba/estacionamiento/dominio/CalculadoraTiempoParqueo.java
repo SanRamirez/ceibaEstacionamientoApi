@@ -48,7 +48,7 @@ public class CalculadoraTiempoParqueo {
 	}
 	
 	
-	public int calcularDiasTranscurridos(float horasTotalesParqueo) {
+	private int calcularDiasTranscurridos(float horasTotalesParqueo) {
 		int dias = 0;
 		float diasTranscurridos = horasTotalesParqueo/24;
 		if (diasTranscurridos > 0) {
@@ -57,7 +57,7 @@ public class CalculadoraTiempoParqueo {
 		return dias;
 	}
 	
-	public int calcularHorasTranscurridas(float horasTotalesParqueo) {
+	private int calcularHorasTranscurridas(float horasTotalesParqueo) {
 		int horas = 0;
 		float horasDelUltimoDia = horasTotalesParqueo % 24; 
 		horas = (int) Math.ceil(horasDelUltimoDia);

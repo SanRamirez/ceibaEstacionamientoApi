@@ -19,7 +19,7 @@ public class FacturaEntity implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	int id;
+	private int id;
 	private String placaVehiculo;
 	private int cilindrajeVehiculo;
 	private int tipoVehiculo;
