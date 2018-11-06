@@ -1,7 +1,7 @@
 package com.ceiba.estacionamiento.dominio;
 
 import java.util.Date;
-
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,6 +38,11 @@ public class VigilanteParqueadero {
 			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,true));
 		}
 	}
+	
+	public List<Vehiculo> obtenerVehiculosParqueados() {
+		return facturaDao.obtenerVehiculosParqueados();
+	}
+	
 	
 	public String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
@@ -106,4 +111,6 @@ public class VigilanteParqueadero {
 		
 		return factura;
 	}
+
+
 }

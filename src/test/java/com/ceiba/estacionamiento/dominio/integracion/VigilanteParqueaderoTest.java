@@ -1,7 +1,5 @@
 package com.ceiba.estacionamiento.dominio.integracion;
 
-import static org.junit.Assert.*;
-
 import java.util.Date;
 
 import org.junit.Test;

@@ -33,17 +33,16 @@ public class FacturaTestDataBuilder {
 		this.fechaIngreso = FECHA_INGRESO;
 	}
 	
-	public FacturaTestDataBuilder conVechiculoYFechaIngreso(Vehiculo vehiculo) {
+	public FacturaTestDataBuilder conVechiculoYFechaIngreso(Vehiculo vehiculo, Date fechaIngreso) {
 		this.placa = vehiculo.getPlaca();
 		this.cilindraje = vehiculo.getCilindraje();
 		this.tipo = vehiculo.getTipo();
+		this.fechaIngreso = fechaIngreso;
 		return this;
 	}
-	
-
-	
+		
 	public FacturaEntity build() {
-		return new FacturaEntity(new Vehiculo(this.placaVehiculo, this.cilindrajeVehiculo,this.tipoVehiculo),FECHA_INGRESO);
+		return new FacturaEntity(new Vehiculo(this.placaVehiculo, this.cilindrajeVehiculo,this.tipoVehiculo),this.fechaIngreso);
 	}
 	
 

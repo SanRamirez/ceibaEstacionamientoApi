@@ -19,10 +19,11 @@ import com.ceiba.estacionamiento.dominio.VigilanteParqueadero;
 import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
+import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
 import com.ceiba.estacionamiento.util.validaciones.VehiculoValidacion;
 
 @RestController
-@RequestMapping("/api/estacionamiento")
+@RequestMapping("/api/v1.0/estacionamiento")
 public class EstacionamientoController {
 	
 	private static final Logger LOGGER = LogManager.getLogger(VehiculoValidacion.class);
@@ -33,19 +34,36 @@ public class EstacionamientoController {
 	VigilanteParqueadero vigilanteParqueadero; 
 	
 
-	@PostMapping(value = "/registrarIngresoVehiculo")
+	@PostMapping(value = "/registrarIngresoVehiculo/")
 	public ResponseEntity<String> ingresarVehiculo(@RequestBody Vehiculo vehiculo)
 	{
 		try {
 			vigilanteParqueadero.ingresarVehiculo(vehiculo, new Date());
 			return new ResponseEntity<>("OK", HttpStatus.OK);
 		} catch (EstacionamientoException exception) {
-			LOGGER.info("Error en /ingresarVehiculo",exception);
+			LOGGER.info("Error en ingresarVehiculo",exception);
 			return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-   @GetMapping("/obtenerSaludo/{id}")
+	@PostMapping(value = "/registrarSalidaVehiculo/{placa}")
+	public ResponseEntity<Object> retirarVehiculo(@PathVariable(value="placa") String placa){
+		FacturaEntity factura;
+		try {
+			factura = vigilanteParqueadero.registrarSalidaVehiculo(placa);
+			return new ResponseEntity<>(factura, HttpStatus.OK);
+		} catch (EstacionamientoException exception) {
+			LOGGER.info("Error en retirarVehiculo",exception);
+			return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@GetMapping(value = "/consultarVehiculos/")
+	public ResponseEntity<List<Vehiculo>> obtenerVehiculosParqueados(){ 
+		return new ResponseEntity<>(vigilanteParqueadero.obtenerVehiculosParqueados(), HttpStatus.OK );
+	}
+	
+	@GetMapping("/obtenerSaludo/{id}")
    public String getsaludo(@PathVariable(value="id") String nombre){
 	   vigilanteParqueadero.ingresarVehiculo(new Vehiculo("BTS-036", 250, 1), new Date());
 	   return "hola "+nombre;
