@@ -20,7 +20,7 @@ public final class  Constantes {
 	
 	public static final int HORAS_DIA = 24;
 	public static final int HORAS_INICIO_COBRO_UN_DIA = 9;
-	
+
 	private Constantes() {}
 
 }

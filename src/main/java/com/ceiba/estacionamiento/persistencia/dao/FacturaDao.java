@@ -11,7 +11,6 @@ public interface FacturaDao {
 	Vehiculo obtenerVeiculoParqueadoPorPlaca(String placa);
 	FacturaEntity obtenerFacturaVeiculoParqueadoPorPlaca(String placa);
 	void actualizarFactura(FacturaEntity factura);
-	List<Vehiculo> obtenerVehiculosPorTipoParqueados(int tipoVehiculo);
 	List<Vehiculo> obtenerVehiculosParqueados();
 	int contarVehiculosParqueadosPorTipo(int tipoVehiculo);
 

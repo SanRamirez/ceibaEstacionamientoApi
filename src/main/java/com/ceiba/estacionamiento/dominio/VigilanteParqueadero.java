@@ -44,6 +44,7 @@ public class VigilanteParqueadero {
 	}
 	
 	
+	
 	public String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
 		

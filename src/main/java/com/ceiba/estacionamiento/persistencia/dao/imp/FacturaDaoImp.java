@@ -36,19 +36,6 @@ public class FacturaDaoImp implements FacturaDao {
 	}
 
 	@Override
-	public List<Vehiculo> obtenerVehiculosPorTipoParqueados(int tipoVehiculo) {
-		List<Vehiculo> vehiculosDeTipoEspecifico = new ArrayList<>();
-		List<FacturaEntity> facturasVehiculosDeTipoEspecifico = facturaRepository.findByTipoVehiculo(tipoVehiculo);
-		
-		if (facturasVehiculosDeTipoEspecifico == null || facturasVehiculosDeTipoEspecifico.isEmpty()) {
-			return Collections.emptyList();
-		}else {
-			facturasVehiculosDeTipoEspecifico.forEach(factura ->  vehiculosDeTipoEspecifico.add(factura.getVehiculo()));
-			return vehiculosDeTipoEspecifico;
-		}
-	}
-
-	@Override
 	public List<Vehiculo> obtenerVehiculosParqueados() {
 		List<Vehiculo> vehiculosParqueados = new ArrayList<>();
 		List<FacturaEntity> facturasVehiculosParqueados = facturaRepository.findByParqueado(true);
