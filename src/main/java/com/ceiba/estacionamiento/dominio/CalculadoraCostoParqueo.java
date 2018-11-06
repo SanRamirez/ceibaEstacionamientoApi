@@ -1,5 +1,7 @@
 package com.ceiba.estacionamiento.dominio;
 
-public interface CalculadoraCostoParqueo {
+import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
 
+public interface CalculadoraCostoParqueo {
+	public double calcularCostoFactura(FacturaEntity factura);
 }

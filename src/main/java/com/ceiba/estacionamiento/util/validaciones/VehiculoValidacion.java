@@ -67,10 +67,7 @@ public class VehiculoValidacion {
 		if(tipoVehiculo == Constantes.CODIGO_VEHICULO_CARRO) {
 			limite = Constantes.PARQUEADERO_CEIBA_LIMITE_CARROS;
 		}
-		
 		return limite;
 	}
-	
-	
 
 }

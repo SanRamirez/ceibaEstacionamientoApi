@@ -1,5 +1,6 @@
 package com.ceiba.estacionamiento.persistencia.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
@@ -12,7 +13,9 @@ import com.ceiba.estacionamiento.modelo.Vehiculo;
 
 @Entity
 @Table(name="factura")
-public class FacturaEntity {
+public class FacturaEntity implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

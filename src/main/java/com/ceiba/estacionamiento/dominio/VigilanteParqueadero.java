@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
+import com.ceiba.estacionamiento.util.Constantes;
 import com.ceiba.estacionamiento.util.validaciones.VehiculoValidacion;
 
 @Component
@@ -73,25 +74,36 @@ public class VigilanteParqueadero {
 	}
 	
 	public FacturaEntity registrarSalidaVehiculo (String placa) {
-		//verificar que el vehiculo este en el parqueadero
 		FacturaEntity factura = facturaDao.obtenerFacturaVeiculoParqueadoPorPlaca(placa);
 		if(factura == null ) {
 			return factura;
 		}
-		
-		//agregar costo a la factura
+		factura.setFechaSalida(new Date());
 		factura = agregarCostoFactura(factura);
-		
-		//actualizar factura en la base de datos
-		
-		
-		//retornar factura
+		factura.setParqueado(false);
+		facturaDao.actualizarFactura(factura);
 		return factura;
 	}
 	
 	public FacturaEntity agregarCostoFactura(FacturaEntity factura){
+		CalculadoraCostoParqueo calculadoraCosto;
+		double costoParqueo;
+
+		switch ( factura.getTipoVehiculo() ) {
+	      case Constantes.CODIGO_VEHICULO_MOTO:
+	           calculadoraCosto = new CalculadoraCostoParqueoMoto();
+	           break;
+	      case Constantes.CODIGO_VEHICULO_CARRO:
+	    	  	calculadoraCosto = new CalculadoraCostoParqueoCarro(); 
+	    	  	break;
+	      default:
+	    	  calculadoraCosto = null;
+	           break;
+		}
+	
+		costoParqueo = (calculadoraCosto != null ? calculadoraCosto.calcularCostoFactura(factura) : 0);
+		factura.setValor(costoParqueo);
+		
 		return factura;
 	}
-		
-	
 }
