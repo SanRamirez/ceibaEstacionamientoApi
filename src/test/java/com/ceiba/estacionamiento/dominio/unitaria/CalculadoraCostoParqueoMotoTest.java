@@ -24,9 +24,29 @@ public class CalculadoraCostoParqueoMotoTest {
 
 	@Autowired
 	public CalculadoraCostoParqueoMoto calculadoraCostoMoto;
+	
+	
+	@Test
+	public void testCalcularCostoFacturaMoto() {
+		// arrange
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conTipo(Constantes.CODIGO_VEHICULO_MOTO).build();
+		Calendar calendar = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0);
+		Date fechaIngreso = calendar.getTime();
+		calendar.add(Calendar.HOUR, 10);
+		Date fechaSalida = calendar.getTime();
+		FacturaEntity factura = new FacturaTestDataBuilder().conVechiculoYFechaIngreso(vehiculo, fechaIngreso).build();
+		factura.setFechaSalida(fechaSalida);
+		double costoEsperado = 4000;
+		
+		// act
+		double costoCalculado = calculadoraCostoMoto.calcularCostoFactura(factura);
+
+		// assert
+		Assert.assertTrue(costoEsperado == costoCalculado);
+	}
 
 	@Test
-	public void testCalcularCostoFactura() {
+	public void testCalcularCostoFacturaMotoCCMayor500() {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conTipo(Constantes.CODIGO_VEHICULO_MOTO).build();
 		vehiculo.setCilindraje(650);
@@ -44,5 +64,7 @@ public class CalculadoraCostoParqueoMotoTest {
 		// assert
 		Assert.assertTrue(costoEsperado == costoCalculado);
 	}
+	
+
 
 }

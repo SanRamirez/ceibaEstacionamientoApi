@@ -87,4 +87,16 @@ public class CalculadoraTiempoParqueoTest {
 		// assert
 		Assert.assertTrue(horasACobrarEsperados == horasACobraroCalculadas);
 	}
+	
+	@Test
+	public void testObtenerHorasACobrarDiasDeParQueoACobar() {
+		// arrange
+		long horasTotalesDeParqueo = 4;
+		long horasACobrarEsperados = 4;
+		
+		// act
+		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasAcobrar(horasTotalesDeParqueo); 
+		// assert
+		Assert.assertTrue(horasACobrarEsperados == horasACobraroCalculadas);
+	}
 }
