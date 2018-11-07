@@ -62,26 +62,5 @@ public class EstacionamientoController {
 	public ResponseEntity<List<Vehiculo>> obtenerVehiculosParqueados(){ 
 		return new ResponseEntity<>(vigilanteParqueadero.obtenerVehiculosParqueados(), HttpStatus.OK );
 	}
-	
-	@GetMapping("/obtenerSaludo/{id}")
-   public String getsaludo(@PathVariable(value="id") String nombre){
-	   vigilanteParqueadero.ingresarVehiculo(new Vehiculo("BTS-036", 250, 1), new Date());
-	   return "hola "+nombre;
-    }
-   
-   @GetMapping("/obtenerParqueados")
-   public List<Vehiculo> getParqueados(){
-	   return facturaDao.obtenerVehiculosParqueados();
-    }
-	 
-   @GetMapping("/obtenerParqueadosPorPlaca/{placa}")
-   public Vehiculo getParqueadoPorPlaca(@PathVariable(value="placa") String placa){
-	   return facturaDao.obtenerVeiculoParqueadoPorPlaca(placa);
-    }
-   
-   @GetMapping("/obtenerParqueadosPorTipo")
-   public int getParqueadoPorTipo(){
-	   return facturaDao.contarVehiculosParqueadosPorTipo(1);
-    }
    
 }

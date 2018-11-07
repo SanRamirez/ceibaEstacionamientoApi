@@ -36,10 +36,14 @@ public class FacturaTestDataBuilder {
 		this.fechaIngreso = fechaIngreso;
 		return this;
 	}
+	
+	public FacturaTestDataBuilder conPlaca(String placaVehiculo) {
+		this.placaVehiculo = placaVehiculo;
+		return this;
+	}
 		
 	public FacturaEntity build() {
 		return new FacturaEntity(new Vehiculo(this.placaVehiculo, this.cilindrajeVehiculo,this.tipoVehiculo),this.fechaIngreso);
 	}
 	
-
 }

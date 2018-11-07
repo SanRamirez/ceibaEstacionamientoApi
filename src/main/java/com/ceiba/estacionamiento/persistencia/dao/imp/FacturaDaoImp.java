@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class FacturaDaoImp implements FacturaDao {
 	
 	@Autowired
 	private FacturaRepository facturaRepository;
+	
+	private static final Logger LOGGER = LogManager.getLogger(FacturaDaoImp.class);
 	
 	@Override
 	public void guardarFactura(FacturaEntity factura) {
@@ -41,9 +45,12 @@ public class FacturaDaoImp implements FacturaDao {
 		List<FacturaEntity> facturasVehiculosParqueados = facturaRepository.findByParqueado(true);
 		
 		if (facturasVehiculosParqueados == null || facturasVehiculosParqueados.isEmpty()) {
+			LOGGER.info("entra en lista vacia");
 			return Collections.emptyList();
 		}else {
 			facturasVehiculosParqueados.forEach(factura ->  vehiculosParqueados.add(factura.getVehiculo()));
+			LOGGER.info("entra en lista no vacia");
+			LOGGER.info(vehiculosParqueados.size());
 			return vehiculosParqueados;
 		}
 	}
@@ -58,6 +65,11 @@ public class FacturaDaoImp implements FacturaDao {
 		boolean estaParqueado = true;
 		FacturaEntity facturaEntity = facturaRepository.findByPlacaVehiculoAndParqueado(placa, estaParqueado);
 		return (facturaEntity != null ? facturaEntity : null);
+	}
+	
+	@Override
+	public void eliminarTodo() {
+		facturaRepository.deleteAll();
 	}
 
 }

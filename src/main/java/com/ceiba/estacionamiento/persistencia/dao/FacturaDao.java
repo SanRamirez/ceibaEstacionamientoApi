@@ -13,5 +13,6 @@ public interface FacturaDao {
 	void actualizarFactura(FacturaEntity factura);
 	List<Vehiculo> obtenerVehiculosParqueados();
 	int contarVehiculosParqueadosPorTipo(int tipoVehiculo);
+	void eliminarTodo();
 
 }
