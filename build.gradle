@@ -30,6 +30,16 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	runtimeOnly('com.h2database:h2')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	
 	compile("org.springframework.boot:spring-boot-devtools")
+	
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8.2'
+	
+	implementation("org.springframework.boot:spring-boot-devtools")
+	implementation('org.apache.axis:axis:1.4')
+    implementation('org.apache.axis:axis-jaxrpc:1.4')
+    implementation('org.apache.axis:axis-saaj:1.4')
+    implementation('axis:axis-wsdl4j:1.5.1')
+    implementation('commons-discovery:commons-discovery:0.2')
+	
 }
