@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
@@ -28,16 +29,18 @@ public class VigilanteParqueadero {
 	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "no puede ingresar porque el parqueadero esta lleno";
 	
 	//cambiar a String
-	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
+	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
 		LOGGER.info("entra al metodo ingresar vehiculo");
 		String mensajeValidacion = validarIngresoVehiculo(vehiculo, fechaIngreso);
 		LOGGER.info(mensajeValidacion);
 		if( ESTA_AUTORIZADO_A_INGRESAR.equals( mensajeValidacion ) ) {
 			LOGGER.info("entra al if vehiculo autorizado para el ingreso");
 			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,true));
+		}else {
+			throw new EstacionamientoException(mensajeValidacion);
 		}
 	}
-	
+	 
 	public List<Vehiculo> obtenerVehiculosParqueados() {
 		return facturaDao.obtenerVehiculosParqueados();
 	}
@@ -71,34 +74,35 @@ public class VigilanteParqueadero {
 	}
 	
 	private boolean validarIngresoPorDisponibilidad(int tipoVehiculo) {
-		if( !vehiculoValidacion.espacioParaParqueoDisponible(tipoVehiculo)) {
-			LOGGER.debug(NO_PUEDE_INGRESAR_PARQUEADERO_LLENO);
-			return false;
-		}
-		return true;
+		return vehiculoValidacion.espacioParaParqueoDisponible(tipoVehiculo);
 	}
 	
-	public FacturaEntity registrarSalidaVehiculo (String placa) {
-		FacturaEntity factura = facturaDao.obtenerFacturaVeiculoParqueadoPorPlaca(placa);
+	public FacturaEntity registrarSalidaVehiculo (String placa) throws EstacionamientoException {
+		LOGGER.info("entro a registrar salida vigilante");
+		FacturaEntity factura = facturaDao.obtenerFacturaVehiculoParqueadoPorPlaca(placa);
 		if(factura == null ) {
-			return factura;
+			throw new EstacionamientoException("El vehiculo no se encuentra parqueado");
 		}
 		factura.setFechaSalida(new Date());
+		LOGGER.info(factura.getFechaIngreso().toString());
+		LOGGER.info(factura.getFechaSalida().toString());
 		factura.setValor(calcularCostoFactura(factura));
 		factura.setParqueado(false);
 		facturaDao.actualizarFactura(factura);
 		return factura;
 	}
-	
+	 
 	private double calcularCostoFactura(FacturaEntity factura){
 		CalculadoraCostoParqueo calculadoraCosto;
 		double costoParqueo;
-
+		LOGGER.info("tipo vehiculo "+factura.getTipoVehiculo());
 		switch ( factura.getTipoVehiculo() ) {
 	      case Constantes.CODIGO_VEHICULO_MOTO:
+	    	   LOGGER.info("entra al strategy moto");
 	           calculadoraCosto = new CalculadoraCostoParqueoMoto();
 	           break;
 	      case Constantes.CODIGO_VEHICULO_CARRO:
+	    	  	LOGGER.info("entra al strategy carro");
 	    	  	calculadoraCosto = new CalculadoraCostoParqueoCarro(); 
 	    	  	break;
 	      default:

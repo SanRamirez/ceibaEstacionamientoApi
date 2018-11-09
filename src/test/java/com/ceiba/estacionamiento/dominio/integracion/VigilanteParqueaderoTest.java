@@ -1,8 +1,9 @@
 package com.ceiba.estacionamiento.dominio.integracion;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.ceiba.estacionamiento.dominio.VigilanteParqueadero;
+import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.testdatabuilder.VehiculoTestDataBuilder;
@@ -21,8 +23,6 @@ import com.ceiba.estacionamiento.testdatabuilder.VehiculoTestDataBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -37,7 +37,7 @@ public class VigilanteParqueaderoTest {
 	private static final Logger LOGGER = LogManager.getLogger(VigilanteParqueaderoTest.class);
 
 	@Test
-	public void testIngresarVehiculo() {
+	public void testIngresarVehiculo() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().build();
 		Date fechaIngreso = new Date();
@@ -50,20 +50,27 @@ public class VigilanteParqueaderoTest {
 	}
 	
 	@Test
-	public void testIngresarVehiculoPlacaIniciaConAEnDiaNoHabil() {
+	public void testIngresarVehiculoPlacaIniciaConAEnDiaNoHabil() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("AGD-512").build();
 		Date fechaIngreso = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0).getTime();
+		String mensajeEsperado = "no puede ingresar porque no esta en un dia habil";
 		
 		// act
-		vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+		try {
+			vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+			fail();
+			
+		} catch (EstacionamientoException e) {
+			// assert
+			Assert.assertEquals(mensajeEsperado, e.getMessage());
+		}
+		
 
-		// assert
-		Assert.assertNull(facturaDao.obtenerVeiculoParqueadoPorPlaca(vehiculo.getPlaca()));
 	}
 	
 	@Test
-	public void testRegistrarSalidaVehiculo() {
+	public void testRegistrarSalidaVehiculo() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("CBA-210").build();
 		vehiculo.setTipo(2);
@@ -79,7 +86,7 @@ public class VigilanteParqueaderoTest {
 	}
 	
 	@Test
-	public void testObtenerVehiculosParqueados() {
+	public void testObtenerVehiculosParqueados() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo1 = new VehiculoTestDataBuilder().conPlaca("CBA-211").build();
 		vehiculo1.setTipo(2);

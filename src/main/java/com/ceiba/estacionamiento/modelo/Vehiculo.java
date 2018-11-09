@@ -6,6 +6,9 @@ public class Vehiculo {
 	private int cilindraje;
 	private int tipo;
 	
+	public Vehiculo() {
+	}
+	
 	public Vehiculo(String placa, int cilindraje, int tipo) {
 		super();
 		this.placa = placa;

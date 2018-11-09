@@ -61,7 +61,7 @@ public class FacturaDaoImp implements FacturaDao {
 	}
 
 	@Override
-	public FacturaEntity obtenerFacturaVeiculoParqueadoPorPlaca(String placa) {
+	public FacturaEntity obtenerFacturaVehiculoParqueadoPorPlaca(String placa) {
 		boolean estaParqueado = true;
 		FacturaEntity facturaEntity = facturaRepository.findByPlacaVehiculoAndParqueado(placa, estaParqueado);
 		return (facturaEntity != null ? facturaEntity : null);

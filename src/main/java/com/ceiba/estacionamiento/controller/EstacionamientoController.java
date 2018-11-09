@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,10 +29,11 @@ import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TCRMServ
 import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TCRMServicesInterfaceProxy;
 import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TcrmResponse;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/v1.0/estacionamiento")
 public class EstacionamientoController {
+	
 	
 	private static final Logger LOGGER = LogManager.getLogger(VehiculoValidacion.class);
 	
@@ -39,8 +41,8 @@ public class EstacionamientoController {
 	FacturaDao facturaDao;
 	@Autowired
 	VigilanteParqueadero vigilanteParqueadero; 
-	
 
+	
 	@PostMapping(value = "/registrarIngresoVehiculo")
 	public ResponseEntity<String> ingresarVehiculo(@RequestBody Vehiculo vehiculo)
 	{
@@ -53,7 +55,7 @@ public class EstacionamientoController {
 		}
 	}
 	
-	@PostMapping(value = "/registrarSalidaVehiculo/{placa}")
+	@GetMapping(value = "/registrarSalidaVehiculo/{placa}")
 	public ResponseEntity<Object> retirarVehiculo(@PathVariable(value="placa") String placa){
 		FacturaEntity factura;
 		try {

@@ -10,7 +10,7 @@ import com.ceiba.estacionamiento.util.Constantes;
 public class CalculadoraCostoParqueoMoto implements CalculadoraCostoParqueo {
 
 	@Autowired
-	private CalculadoraTiempoParqueo calculadoraTiempo;
+	private CalculadoraTiempoParqueo calculadoraTiempo = new CalculadoraTiempoParqueo();
 
 	@Override
 	public double calcularCostoFactura(FacturaEntity factura) {
@@ -19,7 +19,6 @@ public class CalculadoraCostoParqueoMoto implements CalculadoraCostoParqueo {
 		int horasACobrar = calculadoraTiempo.calcularHorasAcobrar(horasTotalesParqueo);
 		double costoSencillo = (diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO);
 		return (factura.getCilindrajeVehiculo() > 500 ? costoSencillo + Constantes.COBRO_ADICIONAL_MOTO_CC_MAYOR_A_500 : costoSencillo);
-
 	}
 
 }
