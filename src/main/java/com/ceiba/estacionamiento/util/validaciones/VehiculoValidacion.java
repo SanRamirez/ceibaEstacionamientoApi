@@ -23,17 +23,14 @@ public class VehiculoValidacion {
 	FacturaDao factDao;
 	
 	public boolean datosDelVehiculoValidosParaIngreso (Vehiculo vehiculo) {
+		boolean esvalido = true;
 		if(vehiculo.getPlaca() == null) {
-			return false;
+			esvalido = false;
 		}
-		else {
-			if(vehiculo.getPlaca().trim().isEmpty() || !tipoVehiculoEsValido( vehiculo.getTipo())) {
-				return false;
-			}
-			else {
-				return true;
-			}
+		if(vehiculo.getPlaca().trim().isEmpty() || !tipoVehiculoEsValido( vehiculo.getTipo())) {
+			esvalido = false;
 		}
+		return esvalido;
 	}
 	
 	public boolean placaIniciaConletraA(String placaVehiculo) {
@@ -68,7 +65,6 @@ public class VehiculoValidacion {
 		}
 		return false;
 	}
-	
 	
 	private  int limitePorTipoVehiculo(int tipoVehiculo) {
 		int limite = 0;
