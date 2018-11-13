@@ -31,25 +31,3 @@ public class CalculadoraCostoParqueoMoto implements CalculadoraCostoParqueo {
 	}
 
 }
-
-
-/*
-	@Override
-	public FacturaEntity calcularCostoFactura(FacturaEntity factura) {
-		long horasTotalesParqueo = calculadoraTiempo.obtenerHorasParqueo(factura.getFechaIngreso(),factura.getFechaSalida());
-		int diasACobrar = calculadoraTiempo.calcularDiasAcobrar(horasTotalesParqueo);
-		int horasACobrar = calculadoraTiempo.calcularHorasAcobrar(horasTotalesParqueo);
-		double costoParqueo; 
-		if(factura.getCilindrajeVehiculo() > 500 ){
-			costoParqueo = ((diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO))
-					+ Constantes.COBRO_ADICIONAL_MOTO_CC_MAYOR_A_500;
-		}else {
-			costoParqueo = (diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO);
-		}
-		factura.setTotalDias(diasACobrar);
-		factura.setTotalHoras(horasACobrar);
-		factura.setValor(costoParqueo);
-		return factura;
-	}
-
-*/

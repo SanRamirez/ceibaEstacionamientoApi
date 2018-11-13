@@ -25,5 +25,3 @@ public class CalculadoraCostoParqueoCarro implements CalculadoraCostoParqueo {
 	}
 
 }
-
-

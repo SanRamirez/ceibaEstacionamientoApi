@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ceiba.estacionamiento.dominio.VigilanteParqueadero;
 import com.ceiba.estacionamiento.exception.EstacionamientoException;
-import com.ceiba.estacionamiento.modelo.Mensaje;
+import com.ceiba.estacionamiento.modelo.MensajeRespuesta;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
@@ -47,14 +47,14 @@ public class EstacionamientoController {
 	
 	@CrossOrigin
 	@PostMapping(value = "/registrarIngresoVehiculo")
-	public ResponseEntity<Mensaje> ingresarVehiculo(@RequestBody Vehiculo vehiculo)
+	public ResponseEntity<MensajeRespuesta> ingresarVehiculo(@RequestBody Vehiculo vehiculo)
 	{
 		try {
 			vigilanteParqueadero.ingresarVehiculo(vehiculo, new Date());
-			return new ResponseEntity<>(new Mensaje("OK"), HttpStatus.OK);
+			return new ResponseEntity<>(new MensajeRespuesta("OK"), HttpStatus.OK);
 		} catch (EstacionamientoException exception) {
 			LOGGER.info("Error en /registrarIngresoVehiculo",exception);
-			return new ResponseEntity<>(new Mensaje(exception.getMessage()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new MensajeRespuesta(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class EstacionamientoController {
 			return new ResponseEntity<>(factura, HttpStatus.OK);
 		} catch (EstacionamientoException exception) {
 			LOGGER.info("Error en /registrarSalidaVehiculo",exception);
-			return new ResponseEntity<>(new Mensaje(exception.getMessage()), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(new MensajeRespuesta(exception.getMessage()), HttpStatus.BAD_REQUEST);
 		}
 	}
 	

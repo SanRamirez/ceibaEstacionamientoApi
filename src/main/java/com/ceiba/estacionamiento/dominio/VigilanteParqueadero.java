@@ -89,11 +89,12 @@ public class VigilanteParqueadero {
 	}
 	
 	private boolean vehiculoEstaParqueado(String placaVehiculo) {
+		boolean estaParqueado = true;
 		FacturaEntity factura = facturaDao.obtenerFacturaVehiculoParqueadoPorPlaca(placaVehiculo);
 		if(factura == null ) {
-			return false;
+			estaParqueado = false;
 		}
-		return true;
+		return estaParqueado;
 	}
 	
 	public FacturaEntity registrarSalidaVehiculo (String placa) throws EstacionamientoException {
