@@ -39,7 +39,7 @@ public class CalculadoraCostoParqueoMotoTest {
 		double costoEsperado = 4000;
 		
 		// act
-		double costoCalculado = calculadoraCostoMoto.calcularCostoFactura(factura);
+		double costoCalculado = calculadoraCostoMoto.calcularCostoFactura(factura).getValor();
 
 		// assert
 		Assert.assertTrue(costoEsperado == costoCalculado);
@@ -59,7 +59,7 @@ public class CalculadoraCostoParqueoMotoTest {
 		double costoEsperado = 6000;
 		
 		// act
-		double costoCalculado = calculadoraCostoMoto.calcularCostoFactura(factura);
+		double costoCalculado = calculadoraCostoMoto.calcularCostoFactura(factura).getValor();
 
 		// assert
 		Assert.assertTrue(costoEsperado == costoCalculado);

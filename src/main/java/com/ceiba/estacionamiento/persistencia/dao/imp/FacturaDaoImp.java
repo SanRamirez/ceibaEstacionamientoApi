@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ceiba.estacionamiento.modelo.Vehiculo;
+import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
 import com.ceiba.estacionamiento.persistencia.repository.FacturaRepository;
@@ -40,15 +41,15 @@ public class FacturaDaoImp implements FacturaDao {
 	}
 
 	@Override
-	public List<Vehiculo> obtenerVehiculosParqueados() {
-		List<Vehiculo> vehiculosParqueados = new ArrayList<>();
+	public List<VehiculoIngresado> obtenerVehiculosParqueados() {
+		List<VehiculoIngresado> vehiculosParqueados = new ArrayList<>();
 		List<FacturaEntity> facturasVehiculosParqueados = facturaRepository.findByParqueado(true);
 		
 		if (facturasVehiculosParqueados == null || facturasVehiculosParqueados.isEmpty()) {
 			LOGGER.info("entra en lista vacia");
 			return Collections.emptyList();
 		}else {
-			facturasVehiculosParqueados.forEach(factura ->  vehiculosParqueados.add(factura.getVehiculo()));
+			facturasVehiculosParqueados.forEach(factura ->  vehiculosParqueados.add(factura.getVehiculoIngresado()));
 			LOGGER.info("entra en lista no vacia");
 			LOGGER.info(vehiculosParqueados.size());
 			return vehiculosParqueados;

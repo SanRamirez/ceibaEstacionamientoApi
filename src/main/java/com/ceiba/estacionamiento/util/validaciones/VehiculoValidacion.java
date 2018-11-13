@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.util.Constantes;
 
@@ -21,8 +22,18 @@ public class VehiculoValidacion {
 	private @Autowired
 	FacturaDao factDao;
 	
-	public boolean vehiculoEsValidoParaIngreso() {
-		return true;
+	public boolean datosDelVehiculoValidosParaIngreso (Vehiculo vehiculo) {
+		if(vehiculo.getPlaca() == null) {
+			return false;
+		}
+		else {
+			if(vehiculo.getPlaca().trim().isEmpty() || !tipoVehiculoEsValido( vehiculo.getTipo())) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
 	}
 	
 	public boolean placaIniciaConletraA(String placaVehiculo) {
@@ -42,7 +53,7 @@ public class VehiculoValidacion {
 		return false;
 	}
 	
-	public boolean tipoVehiculoEsValido(int tipoVehiculo){
+	private boolean tipoVehiculoEsValido(int tipoVehiculo){
 		if(tipoVehiculo==Constantes.CODIGO_VEHICULO_MOTO || tipoVehiculo==Constantes.CODIGO_VEHICULO_CARRO) {
 			LOGGER.debug("El tipo de vehiculo ingrasado es valido");
 			return true;
@@ -52,7 +63,7 @@ public class VehiculoValidacion {
 	
 	public boolean espacioParaParqueoDisponible(int tipoVehiculo) {
 		if (factDao.contarVehiculosParqueadosPorTipo(tipoVehiculo)< limitePorTipoVehiculo(tipoVehiculo)) {
-			LOGGER.debug("Se cuenta con espacio disponible para parqueo de ese vehiculo");
+			LOGGER.debug("Se cuenta con espacio disponible para parqueo de este tipo de vehiculo");
 			return true;
 		}
 		return false;

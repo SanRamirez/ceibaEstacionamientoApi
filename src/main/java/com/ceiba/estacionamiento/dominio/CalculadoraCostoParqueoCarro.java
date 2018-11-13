@@ -13,11 +13,17 @@ public class CalculadoraCostoParqueoCarro implements CalculadoraCostoParqueo {
 	private CalculadoraTiempoParqueo calculadoraTiempo = new CalculadoraTiempoParqueo();
 	
 	@Override
-	public double calcularCostoFactura(FacturaEntity factura) {
+	public FacturaEntity calcularCostoFactura(FacturaEntity factura) {
 		long horasTotalesParqueo = calculadoraTiempo.obtenerHorasParqueo(factura.getFechaIngreso(),factura.getFechaSalida());
 		int diasACobrar = calculadoraTiempo.calcularDiasAcobrar(horasTotalesParqueo);
 		int horasACobrar = calculadoraTiempo.calcularHorasAcobrar(horasTotalesParqueo);
-		return (diasACobrar*Constantes.COSTO_DIA_CARRO) + (horasACobrar*Constantes.COSTO_HORA_CARRO);
-		}
+		double costoParqueo = (diasACobrar*Constantes.COSTO_DIA_CARRO) + (horasACobrar*Constantes.COSTO_HORA_CARRO);
+		factura.setTotalDias(diasACobrar);
+		factura.setTotalHoras(horasACobrar);
+		factura.setValor(costoParqueo);
+		return factura;
+	}
 
 }
+
+

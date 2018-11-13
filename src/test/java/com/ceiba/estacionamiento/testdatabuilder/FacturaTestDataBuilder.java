@@ -43,7 +43,12 @@ public class FacturaTestDataBuilder {
 	}
 		
 	public FacturaEntity build() {
-		return new FacturaEntity(new Vehiculo(this.placaVehiculo, this.cilindrajeVehiculo,this.tipoVehiculo),this.fechaIngreso);
+		FacturaEntity factura = new FacturaEntity();
+		factura.setPlacaVehiculo(this.placaVehiculo);
+		factura.setCilindrajeVehiculo(this.cilindrajeVehiculo);
+		factura.setTipoVehiculo(this.tipoVehiculo);
+		factura.setFechaIngreso(this.fechaIngreso);
+		return factura;
 	}
 	
 }

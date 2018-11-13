@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.ceiba.estacionamiento.modelo.Vehiculo;
+import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 
 @Entity
 @Table(name="factura")
@@ -29,14 +30,6 @@ public class FacturaEntity implements Serializable{
 	private int totalDias;
 	private int totalHoras;
 	private boolean parqueado;
-	
-	public FacturaEntity(Vehiculo vehiculo, Date fechaIngreso) {
-		super();
-		this.placaVehiculo = vehiculo.getPlaca();
-		this.cilindrajeVehiculo = vehiculo.getCilindraje();
-		this.tipoVehiculo = vehiculo.getTipo();
-		this.fechaIngreso = fechaIngreso;
-	}
 	
 	public FacturaEntity(Vehiculo vehiculo, Date fechaIngreso, boolean parqueado) {
 		super();
@@ -63,12 +56,9 @@ public class FacturaEntity implements Serializable{
 		return new Vehiculo(placaVehiculo, cilindrajeVehiculo, tipoVehiculo);
 	}
 
-	public void setVehiculo(Vehiculo vehiculo) {
-		this.placaVehiculo = vehiculo.getPlaca();
-		this.cilindrajeVehiculo = vehiculo.getCilindraje();
-		this.tipoVehiculo = vehiculo.getTipo();
+	public VehiculoIngresado getVehiculoIngresado() {
+		return new VehiculoIngresado(placaVehiculo, cilindrajeVehiculo, tipoVehiculo,fechaIngreso);
 	}
-	
 	
 	public String getPlacaVehiculo() {
 		return placaVehiculo;

@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.ceiba.estacionamiento.dominio.VigilanteParqueadero;
 import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
+import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.testdatabuilder.VehiculoTestDataBuilder;
 
@@ -54,7 +55,7 @@ public class VigilanteParqueaderoTest {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("AGD-512").build();
 		Date fechaIngreso = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0).getTime();
-		String mensajeEsperado = "no puede ingresar porque no esta en un dia habil";
+		String mensajeEsperado = "No puede ingresar porque no esta en un dia habil";
 		
 		// act
 		try {
@@ -65,12 +66,10 @@ public class VigilanteParqueaderoTest {
 			// assert
 			Assert.assertEquals(mensajeEsperado, e.getMessage());
 		}
-		
-
 	}
 	
 	@Test
-	public void testRegistrarSalidaVehiculo() throws EstacionamientoException {
+	public void testRegistrarSalidaVehiculoMoto() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("CBA-210").build();
 		vehiculo.setTipo(2);
@@ -86,6 +85,38 @@ public class VigilanteParqueaderoTest {
 	}
 	
 	@Test
+	public void testRegistrarSalidaVehiculoCarro() throws EstacionamientoException {
+		// arrange
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("MBA-210").build();
+		Calendar calendar = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0);
+		Date fechaIngreso = calendar.getTime();
+		
+		// act
+		vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+		vigilanteParqueadero.registrarSalidaVehiculo(vehiculo.getPlaca());
+
+		// assert
+		Assert.assertNull(facturaDao.obtenerVeiculoParqueadoPorPlaca(vehiculo.getPlaca()));
+	}
+	
+	@Test
+	public void testRegistrarSalidaVehiculoNoParqueado() throws EstacionamientoException {
+		// arrange
+		String placaVehiculoNoParqueado = "ZZZ-999";
+		String mensajeEsperado = "El vehiculo no se encuentra parqueado";
+		
+		// act
+		try {
+			vigilanteParqueadero.registrarSalidaVehiculo(placaVehiculoNoParqueado); 
+			fail();
+			
+		} catch (EstacionamientoException e) {
+			// assert
+			Assert.assertEquals(mensajeEsperado, e.getMessage());
+		}
+	}
+	
+	@Test
 	public void testObtenerVehiculosParqueados() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo1 = new VehiculoTestDataBuilder().conPlaca("CBA-211").build();
@@ -93,24 +124,34 @@ public class VigilanteParqueaderoTest {
 		Vehiculo vehiculo2 = new VehiculoTestDataBuilder().conPlaca("DBA-310").build();
 		Calendar calendar = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0);
 		Date fechaIngreso = calendar.getTime();
-		List<Vehiculo> vehiculosObtenidos;
-		List<Vehiculo> vehiculosEsperados = new ArrayList<>();
-		vehiculosEsperados.add(vehiculo1);
-		vehiculosEsperados.add(vehiculo2);
-		//restauramos la tabla para que solo quede con la informacion que vamos a ingresar 
+		List<VehiculoIngresado> vehiculosObtenidos;
+		List<VehiculoIngresado> vehiculosEsperados = new ArrayList<>();
+		vehiculosEsperados.add(new VehiculoIngresado(vehiculo1.getPlaca(),
+				vehiculo1.getCilindraje(),vehiculo1.getTipo(),fechaIngreso));
+		vehiculosEsperados.add(new VehiculoIngresado(vehiculo2.getPlaca(),
+				vehiculo2.getCilindraje(),vehiculo2.getTipo(),fechaIngreso));
 		facturaDao.eliminarTodo();
-		//FacturaDao facturaDaoMock  = mock(FacturaDao.class);
-		//when(facturaDaoMock.obtenerVehiculosParqueados()).thenReturn(vehiculosEsperados);
-		
 		
 		// act
 		vigilanteParqueadero.ingresarVehiculo(vehiculo1, fechaIngreso);
 		vigilanteParqueadero.ingresarVehiculo(vehiculo2, fechaIngreso);
 		vehiculosObtenidos = vigilanteParqueadero.obtenerVehiculosParqueados();
 
-
 		// assert
 		Assert.assertTrue(vehiculosObtenidos.size() == vehiculosEsperados.size());
+	}
+	
+	@Test
+	public void testObtenerVehiculosParqueadosCuandoElParqueaderoEstaVacio() throws EstacionamientoException {
+		// arrange
+		List<VehiculoIngresado> vehiculosObtenidos;
+		facturaDao.eliminarTodo();
+		
+		// act
+		vehiculosObtenidos = vigilanteParqueadero.obtenerVehiculosParqueados();
+
+		// assert
+		Assert.assertTrue(vehiculosObtenidos.isEmpty());
 	}
 
 

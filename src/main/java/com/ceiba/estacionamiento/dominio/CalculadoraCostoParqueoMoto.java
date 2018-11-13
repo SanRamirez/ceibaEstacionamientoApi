@@ -11,14 +11,45 @@ public class CalculadoraCostoParqueoMoto implements CalculadoraCostoParqueo {
 
 	@Autowired
 	private CalculadoraTiempoParqueo calculadoraTiempo = new CalculadoraTiempoParqueo();
-
+	
 	@Override
-	public double calcularCostoFactura(FacturaEntity factura) {
+	public FacturaEntity calcularCostoFactura(FacturaEntity factura) {
 		long horasTotalesParqueo = calculadoraTiempo.obtenerHorasParqueo(factura.getFechaIngreso(),factura.getFechaSalida());
 		int diasACobrar = calculadoraTiempo.calcularDiasAcobrar(horasTotalesParqueo);
 		int horasACobrar = calculadoraTiempo.calcularHorasAcobrar(horasTotalesParqueo);
-		double costoSencillo = (diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO);
-		return (factura.getCilindrajeVehiculo() > 500 ? costoSencillo + Constantes.COBRO_ADICIONAL_MOTO_CC_MAYOR_A_500 : costoSencillo);
+		double costoParqueo;
+		if(factura.getCilindrajeVehiculo() > 500) {
+			costoParqueo = ((diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO))
+					+ Constantes.COBRO_ADICIONAL_MOTO_CC_MAYOR_A_500;
+		}else {
+			costoParqueo = (diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO);
+		}
+		factura.setTotalDias(diasACobrar);
+		factura.setTotalHoras(horasACobrar);
+		factura.setValor(costoParqueo);
+		return factura;
 	}
 
 }
+
+
+/*
+	@Override
+	public FacturaEntity calcularCostoFactura(FacturaEntity factura) {
+		long horasTotalesParqueo = calculadoraTiempo.obtenerHorasParqueo(factura.getFechaIngreso(),factura.getFechaSalida());
+		int diasACobrar = calculadoraTiempo.calcularDiasAcobrar(horasTotalesParqueo);
+		int horasACobrar = calculadoraTiempo.calcularHorasAcobrar(horasTotalesParqueo);
+		double costoParqueo; 
+		if(factura.getCilindrajeVehiculo() > 500 ){
+			costoParqueo = ((diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO))
+					+ Constantes.COBRO_ADICIONAL_MOTO_CC_MAYOR_A_500;
+		}else {
+			costoParqueo = (diasACobrar*Constantes.COSTO_DIA_MOTO) + (horasACobrar*Constantes.COSTO_HORA_MOTO);
+		}
+		factura.setTotalDias(diasACobrar);
+		factura.setTotalHoras(horasACobrar);
+		factura.setValor(costoParqueo);
+		return factura;
+	}
+
+*/

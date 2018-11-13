@@ -40,7 +40,7 @@ public class CalculadoraCostoParqueoCarroTest {
 		double costoEsperado = 11000;
 		
 		// act
-		double costoCalculado = calculadoraCostocarro.calcularCostoFactura(factura);
+		double costoCalculado = calculadoraCostocarro.calcularCostoFactura(factura).getValor();
 
 		// assert
 		Assert.assertTrue(costoEsperado == costoCalculado);

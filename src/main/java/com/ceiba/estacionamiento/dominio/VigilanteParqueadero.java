@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
+import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
 import com.ceiba.estacionamiento.util.Constantes;
@@ -24,9 +25,13 @@ public class VigilanteParqueadero {
 	private VehiculoValidacion vehiculoValidacion;
 	private static final Logger LOGGER = LogManager.getLogger(VigilanteParqueadero.class);
 	
-	private static final String ESTA_AUTORIZADO_A_INGRESAR = "esta autorizado a ingresar";
-	private static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "no puede ingresar porque no esta en un dia habil";
-	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "no puede ingresar porque el parqueadero esta lleno";
+	private static final String ESTA_AUTORIZADO_A_INGRESAR = "Esta autorizado a ingresar";
+	private static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "No puede ingresar porque no esta en un dia habil";
+	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "No puede ingresar porque el parqueadero esta lleno";
+	private static final String DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO = "Datos del vehiculo no son validos para el ingreso";
+	private static final String FECHA_INGRESO_ES_NULA= "Fecha de ingreso es nula";
+	private static final String EL_VEHICULO_NO_SE_ENCUENTRA_PARQUEADO = "El vehiculo no se encuentra parqueado";
+	private static final String EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO = "El vehiculo ya se encuentra parqueado";
 	
 	//cambiar a String
 	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
@@ -41,7 +46,7 @@ public class VigilanteParqueadero {
 		}
 	}
 	 
-	public List<Vehiculo> obtenerVehiculosParqueados() {
+	public List<VehiculoIngresado> obtenerVehiculosParqueados() {
 		return facturaDao.obtenerVehiculosParqueados();
 	}
 	
@@ -50,9 +55,16 @@ public class VigilanteParqueadero {
 	private String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
 		
-		//validar vehiculo y fecha
-		vehiculoValidacion.tipoVehiculoEsValido(vehiculo.getTipo());
-		
+		if (! vehiculoValidacion.datosDelVehiculoValidosParaIngreso(vehiculo)) {
+			return DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO;
+		}
+		if (fechaIngreso == null) {
+			return FECHA_INGRESO_ES_NULA; 
+		}
+		if(vehiculoEstaParqueado(vehiculo.getPlaca())) {
+			return EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO;
+			
+		}
 		if (!validarIngresoPorPlacaParaFechaIngreso(vehiculo.getPlaca(), fechaIngreso)) {
 			return NO_PUEDE_INGRESAR_DIA_NO_HABIL;
 		}
@@ -60,14 +72,13 @@ public class VigilanteParqueadero {
 		if (!validarIngresoPorDisponibilidad(vehiculo.getTipo())) {
 			return NO_PUEDE_INGRESAR_PARQUEADERO_LLENO;
 		}
-				
 		return ESTA_AUTORIZADO_A_INGRESAR;
 	}
 	
 	
 	private boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
 		if(vehiculoValidacion.placaIniciaConletraA(placaVehiculo) && !vehiculoValidacion.diaEsDomingoOLunes(fechaIngreso)) {
-			LOGGER.debug(NO_PUEDE_INGRESAR_DIA_NO_HABIL);
+			LOGGER.info(NO_PUEDE_INGRESAR_PARQUEADERO_LLENO);
 			return false;
 		}
 		return true;
@@ -77,24 +88,29 @@ public class VigilanteParqueadero {
 		return vehiculoValidacion.espacioParaParqueoDisponible(tipoVehiculo);
 	}
 	
+	private boolean vehiculoEstaParqueado(String placaVehiculo) {
+		FacturaEntity factura = facturaDao.obtenerFacturaVehiculoParqueadoPorPlaca(placaVehiculo);
+		if(factura == null ) {
+			return false;
+		}
+		return true;
+	}
+	
 	public FacturaEntity registrarSalidaVehiculo (String placa) throws EstacionamientoException {
 		LOGGER.info("entro a registrar salida vigilante");
 		FacturaEntity factura = facturaDao.obtenerFacturaVehiculoParqueadoPorPlaca(placa);
 		if(factura == null ) {
-			throw new EstacionamientoException("El vehiculo no se encuentra parqueado");
+			throw new EstacionamientoException(EL_VEHICULO_NO_SE_ENCUENTRA_PARQUEADO);
 		}
 		factura.setFechaSalida(new Date());
-		LOGGER.info(factura.getFechaIngreso().toString());
-		LOGGER.info(factura.getFechaSalida().toString());
-		factura.setValor(calcularCostoFactura(factura));
+		factura = calcularCostoFactura(factura);
 		factura.setParqueado(false);
 		facturaDao.actualizarFactura(factura);
 		return factura;
 	}
 	 
-	private double calcularCostoFactura(FacturaEntity factura){
+	private FacturaEntity calcularCostoFactura(FacturaEntity factura) throws EstacionamientoException{
 		CalculadoraCostoParqueo calculadoraCosto;
-		double costoParqueo;
 		LOGGER.info("tipo vehiculo "+factura.getTipoVehiculo());
 		switch ( factura.getTipoVehiculo() ) {
 	      case Constantes.CODIGO_VEHICULO_MOTO:
@@ -106,12 +122,9 @@ public class VigilanteParqueadero {
 	    	  	calculadoraCosto = new CalculadoraCostoParqueoCarro(); 
 	    	  	break;
 	      default:
-	    	  calculadoraCosto = null;
-	           break;
+	    	  throw new EstacionamientoException("El tipo de vehiculo que contiene la factura no se encuentra registrado");
 		}
-		costoParqueo = (calculadoraCosto != null ? calculadoraCosto.calcularCostoFactura(factura) : 0);
-		return costoParqueo;
+		factura = calculadoraCosto.calcularCostoFactura(factura);
+		return factura;
 	}
-
-
 }
