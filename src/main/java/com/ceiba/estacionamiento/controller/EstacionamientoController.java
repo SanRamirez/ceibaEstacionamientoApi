@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ceiba.estacionamiento.dominio.VigilanteParqueadero;
 import com.ceiba.estacionamiento.exception.EstacionamientoException;
+import com.ceiba.estacionamiento.modelo.Factura;
 import com.ceiba.estacionamiento.modelo.MensajeRespuesta;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
-import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
-import com.ceiba.estacionamiento.util.validaciones.VehiculoValidacion;
 
 import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TCRMServicesInterface;
 import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TCRMServicesInterfaceProxy;
@@ -37,7 +36,7 @@ import com.sc.nexura.superfinanciera.action.generic.services.trm.action.TcrmResp
 public class EstacionamientoController {
 	
 	
-	private static final Logger LOGGER = LogManager.getLogger(VehiculoValidacion.class);
+	private static final Logger LOGGER = LogManager.getLogger(EstacionamientoController.class);
 	
 	@Autowired
 	FacturaDao facturaDao;
@@ -61,7 +60,7 @@ public class EstacionamientoController {
 	@CrossOrigin
 	@GetMapping(value = "/registrarSalidaVehiculo/{placa}")
 	public ResponseEntity<Object> retirarVehiculo(@PathVariable(value="placa") String placa){
-		FacturaEntity factura;
+		Factura factura;
 		try {
 			factura = vigilanteParqueadero.registrarSalidaVehiculo(placa);
 			return new ResponseEntity<>(factura, HttpStatus.OK);
@@ -91,7 +90,6 @@ public class EstacionamientoController {
         } catch (RemoteException e) {
         	LOGGER.info("Error en /trm",e);
 		}
-        
         return 0.0f;
 	}
 }

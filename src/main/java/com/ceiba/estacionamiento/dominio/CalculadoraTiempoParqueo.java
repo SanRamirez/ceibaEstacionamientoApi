@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.ceiba.estacionamiento.util.Constantes;
+
 @Component
 public class CalculadoraTiempoParqueo {
 	
@@ -26,21 +28,21 @@ public class CalculadoraTiempoParqueo {
 	}
 	
 	
-	public int calcularDiasAcobrar(float horasTotalesParqueo){
+	public int calcularDiasACobrar(float horasTotalesParqueo){
 		int diasAcobrar = calcularDiasTranscurridos(horasTotalesParqueo);
-		float horasDelUltimoDia = horasTotalesParqueo % 24; 
+		float horasDelUltimoDia = horasTotalesParqueo % Constantes.HORAS_DIA; 
 		
-		if (horasDelUltimoDia > 9) {
+		if (horasDelUltimoDia > Constantes.HORAS_INICIO_COBRO_UN_DIA) {
 			diasAcobrar += 1;
 		}
 		
 		return diasAcobrar;
 	}
 	
-	public int calcularHorasAcobrar(float horasTotalesParqueo){
+	public int calcularHorasACobrar(float horasTotalesParqueo){
 		int horasAcobrar = calcularHorasTranscurridas(horasTotalesParqueo);
 		
-		if (horasAcobrar > 9) {
+		if (horasAcobrar > Constantes.HORAS_INICIO_COBRO_UN_DIA) {
 			horasAcobrar = 0;
 		}
 		
@@ -50,7 +52,7 @@ public class CalculadoraTiempoParqueo {
 	
 	private int calcularDiasTranscurridos(float horasTotalesParqueo) {
 		int dias = 0;
-		float diasTranscurridos = horasTotalesParqueo/24;
+		float diasTranscurridos = horasTotalesParqueo / Constantes.HORAS_DIA;
 		if (diasTranscurridos > 0) {
 			dias = (int) Math.floor(diasTranscurridos);
 		}
@@ -59,7 +61,7 @@ public class CalculadoraTiempoParqueo {
 	
 	private int calcularHorasTranscurridas(float horasTotalesParqueo) {
 		int horas = 0;
-		float horasDelUltimoDia = horasTotalesParqueo % 24; 
+		float horasDelUltimoDia = horasTotalesParqueo % Constantes.HORAS_DIA; 
 		horas = (int) Math.ceil(horasDelUltimoDia);
 		return horas;
 	}

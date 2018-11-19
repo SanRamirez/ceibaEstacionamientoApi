@@ -30,6 +30,9 @@ public class VehiculoValidacion {
 		if(vehiculo.getPlaca().trim().isEmpty() || !tipoVehiculoEsValido( vehiculo.getTipo())) {
 			esvalido = false;
 		}
+		if(vehiculo.getCilindraje()<1) {
+			esvalido = false;
+		}
 		return esvalido;
 	}
 	

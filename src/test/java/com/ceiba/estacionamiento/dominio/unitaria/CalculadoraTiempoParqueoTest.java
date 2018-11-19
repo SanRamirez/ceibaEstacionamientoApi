@@ -45,7 +45,7 @@ public class CalculadoraTiempoParqueoTest {
 		long diasACobrarEsperados = 2;
 		
 		// act
-		long diasACobrarCalculados = calculadoraTiempoParqueo.calcularDiasAcobrar(horasTotalesDeParqueo);
+		long diasACobrarCalculados = calculadoraTiempoParqueo.calcularDiasACobrar(horasTotalesDeParqueo);
 		// assert
 		Assert.assertTrue(diasACobrarEsperados == diasACobrarCalculados);
 	}
@@ -57,7 +57,7 @@ public class CalculadoraTiempoParqueoTest {
 		long diasACobrarEsperados = 0;
 		
 		// act
-		long diasACobrarCalculados = calculadoraTiempoParqueo.calcularDiasAcobrar(horasTotalesDeParqueo);
+		long diasACobrarCalculados = calculadoraTiempoParqueo.calcularDiasACobrar(horasTotalesDeParqueo);
 		// assert
 		Assert.assertTrue(diasACobrarEsperados == diasACobrarCalculados);
 	}
@@ -70,7 +70,7 @@ public class CalculadoraTiempoParqueoTest {
 		long horasACobrarEsperados = 2;
 		
 		// act
-		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasAcobrar(horasTotalesDeParqueo); 
+		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasACobrar(horasTotalesDeParqueo); 
 		// assert
 		Assert.assertTrue(horasACobrarEsperados == horasACobraroCalculadas);
 	}
@@ -83,7 +83,7 @@ public class CalculadoraTiempoParqueoTest {
 		long horasACobrarEsperados = 0;
 		
 		// act
-		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasAcobrar(horasTotalesDeParqueo); 
+		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasACobrar(horasTotalesDeParqueo); 
 		// assert
 		Assert.assertTrue(horasACobrarEsperados == horasACobraroCalculadas);
 	}
@@ -95,7 +95,7 @@ public class CalculadoraTiempoParqueoTest {
 		long horasACobrarEsperados = 4;
 		
 		// act
-		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasAcobrar(horasTotalesDeParqueo); 
+		long horasACobraroCalculadas = calculadoraTiempoParqueo.calcularHorasACobrar(horasTotalesDeParqueo); 
 		// assert
 		Assert.assertTrue(horasACobrarEsperados == horasACobraroCalculadas);
 	}

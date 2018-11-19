@@ -27,8 +27,8 @@ public class FacturaEntity implements Serializable{
 	private Date fechaIngreso;
 	private Date fechaSalida;
 	private double valor;
-	private int totalDias;
-	private int totalHoras;
+	private int totalDiasACobrar;
+	private int totalHorasACobrar;
 	private boolean parqueado;
 	
 	public FacturaEntity(Vehiculo vehiculo, Date fechaIngreso, boolean parqueado) {
@@ -109,19 +109,19 @@ public class FacturaEntity implements Serializable{
 	}
 
 	public int getTotalDias() {
-		return totalDias;
+		return totalDiasACobrar;
 	}
 
 	public void setTotalDias(int totalDias) {
-		this.totalDias = totalDias;
+		this.totalDiasACobrar = totalDias;
 	}
 
 	public int getTotalHoras() {
-		return totalHoras;
+		return totalHorasACobrar;
 	}
 
 	public void setTotalHoras(int totalHoras) {
-		this.totalHoras = totalHoras;
+		this.totalHorasACobrar = totalHoras;
 	}
 
 	public boolean isParqueado() {
