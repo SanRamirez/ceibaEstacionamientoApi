@@ -7,7 +7,7 @@ import com.ceiba.estacionamiento.modelo.Factura;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
 import com.ceiba.estacionamiento.util.Constantes;
 
-public class FacturaBuilder {
+public final class FacturaBuilder {
 	
 	private static final String FORMATO_FECHA = "yyyy-MM-dd hh:mm a";
 	

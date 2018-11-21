@@ -36,11 +36,13 @@ public class VigilanteParqueadero {
 	private static final String EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO = "El vehiculo ya se encuentra parqueado";
 	
 	
-	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
-		String mensajeValidacion = validarIngresoVehiculo(vehiculo, fechaIngreso);
+	public void ingresarVehiculo(Vehiculo vehiculo) throws EstacionamientoException {
+		boolean parqueado = true;
+		Date fechaIngreso = new Date(); 
+		String mensajeValidacion = validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
 		LOGGER.info(mensajeValidacion);
 		if( ESTA_AUTORIZADO_A_INGRESAR.equals( mensajeValidacion ) ) {
-			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,true));
+			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
 		}else {
 			throw new EstacionamientoException(mensajeValidacion);
 		}
@@ -51,7 +53,7 @@ public class VigilanteParqueadero {
 	}
 	
 	
-	private String validarIngresoVehiculo(Vehiculo vehiculo,Date fechaIngreso) {
+	private String validarVehiculoYFechaDeIngreso(Vehiculo vehiculo,Date fechaIngreso) {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
 		
 		if (!vehiculoValidacion.datosDelVehiculoValidosParaIngreso(vehiculo)) {
