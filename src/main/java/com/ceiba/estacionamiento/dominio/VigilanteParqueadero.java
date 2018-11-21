@@ -36,16 +36,25 @@ public class VigilanteParqueadero {
 	private static final String EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO = "El vehiculo ya se encuentra parqueado";
 	
 	
-	public void ingresarVehiculo(Vehiculo vehiculo) throws EstacionamientoException {
+	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
 		boolean parqueado = true;
-		Date fechaIngreso = new Date(); 
 		String mensajeValidacion = validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
+		/*
+		try {
+			validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
+		} catch (EstacionamientoException e) {
+			LOGGER.info(e.getMessage());
+			throw new EstacionamientoException(e.getMessage());
+		}
+		*/
+		
 		LOGGER.info(mensajeValidacion);
 		if( ESTA_AUTORIZADO_A_INGRESAR.equals( mensajeValidacion ) ) {
 			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
 		}else {
 			throw new EstacionamientoException(mensajeValidacion);
 		}
+		
 	}
 	 
 	public List<VehiculoIngresado> obtenerVehiculosParqueados() {
@@ -53,34 +62,25 @@ public class VigilanteParqueadero {
 	}
 	
 	
-	private String validarVehiculoYFechaDeIngreso(Vehiculo vehiculo,Date fechaIngreso) {
+	private String validarVehiculoYFechaDeIngreso(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
 		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
 		
 		if (!vehiculoValidacion.datosDelVehiculoValidosParaIngreso(vehiculo)) {
 			return DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO;
 		}
-		if (fechaIngreso == null) {
-			return FECHA_INGRESO_ES_NULA; 
+		if (fechaIngreso == null) {	
+			throw new EstacionamientoException(FECHA_INGRESO_ES_NULA);
 		}
 		if(vehiculoEstaParqueado(vehiculo.getPlaca())) {
 			return EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO;
 		}
-		if (!validarIngresoPorPlacaParaFechaIngreso(vehiculo.getPlaca(), fechaIngreso)) {
+		if (!vehiculoValidacion.validarIngresoPorPlacaParaFechaIngreso(vehiculo.getPlaca(), fechaIngreso)) {
 			return NO_PUEDE_INGRESAR_DIA_NO_HABIL;
 		}
 		if (!validarIngresoPorDisponibilidad(vehiculo.getTipo())) {
 			return NO_PUEDE_INGRESAR_PARQUEADERO_LLENO;
 		}
 		return ESTA_AUTORIZADO_A_INGRESAR;
-	}
-	
-	
-	private boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
-		if(vehiculoValidacion.placaIniciaConletraA(placaVehiculo) && !vehiculoValidacion.diaEsDomingoOLunes(fechaIngreso)) {
-			LOGGER.info(NO_PUEDE_INGRESAR_DIA_NO_HABIL);
-			return false;
-		}
-		return true;
 	}
 	
 	private boolean validarIngresoPorDisponibilidad(int tipoVehiculo) {

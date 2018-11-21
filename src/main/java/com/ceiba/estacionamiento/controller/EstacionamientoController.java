@@ -1,5 +1,6 @@
 package com.ceiba.estacionamiento.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,7 @@ public class EstacionamientoController {
 	public ResponseEntity<MensajeRespuesta> ingresarVehiculo(@RequestBody Vehiculo vehiculo)
 	{
 		try {
-			vigilanteParqueadero.ingresarVehiculo(vehiculo);
+			vigilanteParqueadero.ingresarVehiculo(vehiculo, new Date());
 			return new ResponseEntity<>(new MensajeRespuesta("OK"), HttpStatus.CREATED);
 		} catch (EstacionamientoException exception) {
 			LOGGER.info("Error en /registrarIngresoVehiculo",exception);

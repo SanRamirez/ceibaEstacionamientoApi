@@ -36,12 +36,19 @@ public class VehiculoValidacion {
 		return esvalido;
 	}
 	
-	public boolean placaIniciaConletraA(String placaVehiculo) {
+	public boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
+		if(placaIniciaConletraA(placaVehiculo) && !diaEsDomingoOLunes(fechaIngreso)) {
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean placaIniciaConletraA(String placaVehiculo) {
 		placaVehiculo = placaVehiculo.toUpperCase();
 		return placaVehiculo.startsWith("A");
 	}
 	
-	public boolean diaEsDomingoOLunes(Date fecha) {
+	private boolean diaEsDomingoOLunes(Date fecha) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(fecha);
 		int diaSemana =  calendar.get(Calendar.DAY_OF_WEEK);
