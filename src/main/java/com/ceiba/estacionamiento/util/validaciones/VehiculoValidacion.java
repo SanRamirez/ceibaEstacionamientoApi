@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ceiba.estacionamiento.exception.EstacionamientoException;
 import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.util.Constantes;
@@ -19,28 +20,57 @@ public class VehiculoValidacion {
 	
 	private static final Logger LOGGER = LogManager.getLogger(VehiculoValidacion.class);
 	
+	private static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "No puede ingresar porque no esta en un dia habil";
+	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "No puede ingresar porque el parqueadero esta lleno";
+	private static final String DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO = "Datos del vehiculo no son validos para el ingreso";
+	
 	private @Autowired
 	FacturaDao factDao;
 	
-	public boolean datosDelVehiculoValidosParaIngreso (Vehiculo vehiculo) {
-		boolean esvalido = true;
-		if(vehiculo.getPlaca() == null) {
-			esvalido = false;
+	public void validarVehiculo (Vehiculo vehiculo) throws EstacionamientoException {
+		try {
+			validarPlaca(vehiculo.getPlaca());
+			validarTipoDeVehiculo(vehiculo.getTipo());
+			validarCilindraje(vehiculo.getCilindraje());
+		} catch (EstacionamientoException e) {
+			throw new EstacionamientoException(e.getMessage());
 		}
-		if(vehiculo.getPlaca().trim().isEmpty() || !tipoVehiculoEsValido( vehiculo.getTipo())) {
-			esvalido = false;
-		}
-		if(vehiculo.getCilindraje()<1) {
-			esvalido = false;
-		}
-		return esvalido;
 	}
 	
-	public boolean validarIngresoPorPlacaParaFechaIngreso(String placaVehiculo, Date fechaIngreso) {
-		if(placaIniciaConletraA(placaVehiculo) && !diaEsDomingoOLunes(fechaIngreso)) {
-			return false;
+	private void validarPlaca(String placaVehiculo) throws EstacionamientoException {
+		if(placaVehiculo == null || placaVehiculo.trim().isEmpty()) {
+			LOGGER.info("la placa no es valida");
+			throw new EstacionamientoException(DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO);
 		}
-		return true;
+	}
+	
+	private void validarTipoDeVehiculo(int tipo) throws EstacionamientoException {
+		if(!tipoVehiculoEsValido(tipo)) {
+			LOGGER.info("el tipo de vehiculo no es valido");
+			throw new EstacionamientoException(DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO);
+		}
+	}
+	
+	private boolean tipoVehiculoEsValido(int tipoVehiculo){
+		if(tipoVehiculo==Constantes.CODIGO_VEHICULO_MOTO || tipoVehiculo==Constantes.CODIGO_VEHICULO_CARRO) {
+			LOGGER.debug("El tipo de vehiculo ingrasado es valido");
+			return true;
+		}
+		return false;
+	}
+	
+	private void validarCilindraje(int cilindaje) throws EstacionamientoException {
+		if(cilindaje<1) {
+			LOGGER.info("el cilindraje del vehiculo no es valido");
+			throw new EstacionamientoException(DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO);
+		}
+	}
+	
+	public void vetificarSiFechaDeIngresoEsHabilParaLaPlacaDelVehiculo(String placaVehiculo, Date fechaIngreso) throws EstacionamientoException {
+		if(placaIniciaConletraA(placaVehiculo) && !diaEsDomingoOLunes(fechaIngreso)) {
+			LOGGER.info("Placa inicia con letra A y día de ingreso es distinto a lunes o domingo");
+			throw new EstacionamientoException(NO_PUEDE_INGRESAR_DIA_NO_HABIL);
+		}
 	}
 	
 	private boolean placaIniciaConletraA(String placaVehiculo) {
@@ -60,20 +90,11 @@ public class VehiculoValidacion {
 		return false;
 	}
 	
-	private boolean tipoVehiculoEsValido(int tipoVehiculo){
-		if(tipoVehiculo==Constantes.CODIGO_VEHICULO_MOTO || tipoVehiculo==Constantes.CODIGO_VEHICULO_CARRO) {
-			LOGGER.debug("El tipo de vehiculo ingrasado es valido");
-			return true;
+	public void validarEspaciDeParqueoDisponiblePorTipoDeVehiculo(int tipoVehiculo) throws EstacionamientoException {
+		if (factDao.contarVehiculosParqueadosPorTipo(tipoVehiculo)>= limitePorTipoVehiculo(tipoVehiculo)) {
+			LOGGER.debug("No se cuenta con espacio para parquear vehiculos de tipo: "+tipoVehiculo );
+			throw new EstacionamientoException(NO_PUEDE_INGRESAR_PARQUEADERO_LLENO);
 		}
-		return false;
-	}
-	
-	public boolean espacioParaParqueoDisponible(int tipoVehiculo) {
-		if (factDao.contarVehiculosParqueadosPorTipo(tipoVehiculo)< limitePorTipoVehiculo(tipoVehiculo)) {
-			LOGGER.debug("Se cuenta con espacio disponible para parqueo de este tipo de vehiculo");
-			return true;
-		}
-		return false;
 	}
 	
 	private  int limitePorTipoVehiculo(int tipoVehiculo) {

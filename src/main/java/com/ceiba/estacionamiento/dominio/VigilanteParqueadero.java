@@ -15,7 +15,6 @@ import com.ceiba.estacionamiento.modelo.Vehiculo;
 import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.persistencia.entity.FacturaEntity;
-import com.ceiba.estacionamiento.util.Constantes;
 import com.ceiba.estacionamiento.util.validaciones.VehiculoValidacion;
 
 @Component
@@ -25,12 +24,12 @@ public class VigilanteParqueadero {
 	private FacturaDao facturaDao;
 	@Autowired
 	private VehiculoValidacion vehiculoValidacion;
+	@Autowired
+	private CalculadoraCostoParqueoFactory calculadoraCostoParqueoFactory;
+	
+
 	private static final Logger LOGGER = LogManager.getLogger(VigilanteParqueadero.class);
 	
-	private static final String ESTA_AUTORIZADO_A_INGRESAR = "Esta autorizado a ingresar";
-	private static final String NO_PUEDE_INGRESAR_DIA_NO_HABIL = "No puede ingresar porque no esta en un dia habil";
-	private static final String NO_PUEDE_INGRESAR_PARQUEADERO_LLENO = "No puede ingresar porque el parqueadero esta lleno";
-	private static final String DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO = "Datos del vehiculo no son validos para el ingreso";
 	private static final String FECHA_INGRESO_ES_NULA= "Fecha de ingreso es nula";
 	private static final String EL_VEHICULO_NO_SE_ENCUENTRA_PARQUEADO = "El vehiculo no se encuentra parqueado";
 	private static final String EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO = "El vehiculo ya se encuentra parqueado";
@@ -38,23 +37,14 @@ public class VigilanteParqueadero {
 	
 	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
 		boolean parqueado = true;
-		String mensajeValidacion = validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
-		/*
+		
 		try {
 			validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
+			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
 		} catch (EstacionamientoException e) {
 			LOGGER.info(e.getMessage());
 			throw new EstacionamientoException(e.getMessage());
 		}
-		*/
-		
-		LOGGER.info(mensajeValidacion);
-		if( ESTA_AUTORIZADO_A_INGRESAR.equals( mensajeValidacion ) ) {
-			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
-		}else {
-			throw new EstacionamientoException(mensajeValidacion);
-		}
-		
 	}
 	 
 	public List<VehiculoIngresado> obtenerVehiculosParqueados() {
@@ -62,29 +52,18 @@ public class VigilanteParqueadero {
 	}
 	
 	
-	private String validarVehiculoYFechaDeIngreso(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
-		LOGGER.info("entra al metodo  validarIngresoVehiculo");	
+	private void validarVehiculoYFechaDeIngreso(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
+		LOGGER.info("entra al metodo  validarVehiculoYFechaDeIngreso");	
 		
-		if (!vehiculoValidacion.datosDelVehiculoValidosParaIngreso(vehiculo)) {
-			return DATOS_DEL_VEHICULO_NO_SON_VALIDOS_PARA_EL_INGRESO;
-		}
+		vehiculoValidacion.validarVehiculo(vehiculo);
 		if (fechaIngreso == null) {	
 			throw new EstacionamientoException(FECHA_INGRESO_ES_NULA);
 		}
 		if(vehiculoEstaParqueado(vehiculo.getPlaca())) {
-			return EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO;
+			throw new EstacionamientoException(EL_VEHICULO_YA_SE_ENCUENTRA_PARQUEADO);
 		}
-		if (!vehiculoValidacion.validarIngresoPorPlacaParaFechaIngreso(vehiculo.getPlaca(), fechaIngreso)) {
-			return NO_PUEDE_INGRESAR_DIA_NO_HABIL;
-		}
-		if (!validarIngresoPorDisponibilidad(vehiculo.getTipo())) {
-			return NO_PUEDE_INGRESAR_PARQUEADERO_LLENO;
-		}
-		return ESTA_AUTORIZADO_A_INGRESAR;
-	}
-	
-	private boolean validarIngresoPorDisponibilidad(int tipoVehiculo) {
-		return vehiculoValidacion.espacioParaParqueoDisponible(tipoVehiculo);
+		vehiculoValidacion.vetificarSiFechaDeIngresoEsHabilParaLaPlacaDelVehiculo(vehiculo.getPlaca(), fechaIngreso);
+		vehiculoValidacion.validarEspaciDeParqueoDisponiblePorTipoDeVehiculo(vehiculo.getTipo());
 	}
 	
 	private boolean vehiculoEstaParqueado(String placaVehiculo) {
@@ -114,19 +93,9 @@ public class VigilanteParqueadero {
 	}
 	 
 	private FacturaEntity calcularCostoFactura(FacturaEntity factura) throws EstacionamientoException{
-		CalculadoraCostoParqueo calculadoraCosto;
-		LOGGER.info("tipo vehiculo "+factura.getTipoVehiculo());
-		switch ( factura.getTipoVehiculo() ) {
-	      case Constantes.CODIGO_VEHICULO_MOTO:
-	    	   LOGGER.info("entra al strategy moto");
-	           calculadoraCosto = new CalculadoraCostoParqueoMoto();
-	           break;
-	      case Constantes.CODIGO_VEHICULO_CARRO:
-	    	  	LOGGER.info("entra al strategy carro");
-	    	  	calculadoraCosto = new CalculadoraCostoParqueoCarro(); 
-	    	  	break;
-	      default:
-	    	  throw new EstacionamientoException("El tipo de vehiculo que contiene la factura no se encuentra registrado");
+		CalculadoraCostoParqueo calculadoraCosto = calculadoraCostoParqueoFactory.getCalculadoraCostoParqueo(factura.getTipoVehiculo());
+		if (calculadoraCosto == null) {
+			throw new EstacionamientoException("El tipo de vehiculo que contiene la factura no se encuentra registrado");
 		}
 		factura = calculadoraCosto.calcularCostoFactura(factura);
 		return factura;

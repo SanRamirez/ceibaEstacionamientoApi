@@ -35,7 +35,6 @@ public class VigilanteParqueaderoTest {
 	
 	@Autowired
 	FacturaDao facturaDao;
-	private static final Logger LOGGER = LogManager.getLogger(VigilanteParqueaderoTest.class);
 
 	@Test
 	public void testIngresarVehiculo() throws EstacionamientoException {
