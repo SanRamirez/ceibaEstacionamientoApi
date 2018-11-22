@@ -21,10 +21,7 @@ import com.ceiba.estacionamiento.modelo.VehiculoIngresado;
 import com.ceiba.estacionamiento.persistencia.dao.FacturaDao;
 import com.ceiba.estacionamiento.testdatabuilder.VehiculoTestDataBuilder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

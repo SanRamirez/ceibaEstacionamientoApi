@@ -16,11 +16,6 @@ public class FacturaTestDataBuilder {
 	private int cilindrajeVehiculo;
 	private int tipoVehiculo;
 	private Date fechaIngreso;
-	private Date fechaSalida;
-	private double valor;
-	private int totalDias;
-	private int totalHoras;
-	private boolean parqueado;
 	
 	public  FacturaTestDataBuilder() {
 		this.placaVehiculo = PLACA_VEHICULO;
