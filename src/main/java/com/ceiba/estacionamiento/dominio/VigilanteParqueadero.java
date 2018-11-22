@@ -38,13 +38,8 @@ public class VigilanteParqueadero {
 	public void ingresarVehiculo(Vehiculo vehiculo,Date fechaIngreso) throws EstacionamientoException {
 		boolean parqueado = true;
 		
-		try {
-			validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
-			facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
-		} catch (EstacionamientoException e) {
-			LOGGER.info(e.getMessage());
-			throw new EstacionamientoException(e.getMessage());
-		}
+		validarVehiculoYFechaDeIngreso(vehiculo, fechaIngreso);
+		facturaDao.guardarFactura(new FacturaEntity(vehiculo, fechaIngreso,parqueado));
 	}
 	 
 	public List<VehiculoIngresado> obtenerVehiculosParqueados() {

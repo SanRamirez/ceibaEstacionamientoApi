@@ -28,13 +28,9 @@ public class VehiculoValidacion {
 	FacturaDao factDao;
 	
 	public void validarVehiculo (Vehiculo vehiculo) throws EstacionamientoException {
-		try {
-			validarPlaca(vehiculo.getPlaca());
-			validarTipoDeVehiculo(vehiculo.getTipo());
-			validarCilindraje(vehiculo.getCilindraje());
-		} catch (EstacionamientoException e) {
-			throw new EstacionamientoException(e.getMessage());
-		}
+		validarPlaca(vehiculo.getPlaca());
+		validarTipoDeVehiculo(vehiculo.getTipo());
+		validarCilindraje(vehiculo.getCilindraje());
 	}
 	
 	private void validarPlaca(String placaVehiculo) throws EstacionamientoException {
