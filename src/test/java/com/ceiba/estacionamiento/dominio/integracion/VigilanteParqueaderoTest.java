@@ -68,6 +68,43 @@ public class VigilanteParqueaderoTest {
 	}
 	
 	@Test
+	public void testIngresarVehiculoQueYaEstaParqueado() throws EstacionamientoException {
+		// arrange
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("ZDH-512").build();
+		Date fechaIngreso = new GregorianCalendar(2018,Calendar.NOVEMBER,1,8,0,0).getTime();
+		String mensajeEsperado = "El vehiculo ya se encuentra parqueado";
+		vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+		
+		// act
+		try {
+			vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+			fail();
+			
+		} catch (EstacionamientoException e) {
+			// assert
+			Assert.assertEquals(mensajeEsperado, e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testIngresarVehiculoConFechaIngresoNula() throws EstacionamientoException {
+		// arrange
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("WDH-512").build();
+		Date fechaIngreso = null;
+		String mensajeEsperado = "Fecha de ingreso es nula";
+		
+		// act
+		try {
+			vigilanteParqueadero.ingresarVehiculo(vehiculo, fechaIngreso);
+			fail();
+			
+		} catch (EstacionamientoException e) {
+			// assert
+			Assert.assertEquals(mensajeEsperado, e.getMessage());
+		}
+	}
+	
+	@Test
 	public void testRegistrarSalidaVehiculoMoto() throws EstacionamientoException {
 		// arrange
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("CBA-210").build();
